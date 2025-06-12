@@ -18,15 +18,13 @@ async function fetchToken(): Promise<string> {
     PLATFORM,
   } = process.env
 
-  const api = new ApiService(API_URL!)
-  console.log('🔐 Intentando obtener token con:', {
-    GRANT_TYPE,
-    CLIENT_ID,
-    CLIENT_SECRET,
-    USERNAME,
-    PASSWORD,
-    PLATFORM,
-  })
+  if (!API_URL || !GRANT_TYPE || !CLIENT_ID || !USERNAME || !PASSWORD || !PLATFORM) {
+    throw new Error('❌ Variables de entorno incompletas para autenticación SugarCRM')
+  }
+
+  const api = new ApiService(API_URL)
+
+  console.log('🔐 Solicitando nuevo token a SugarCRM...')
 
   try {
     const result = await api.post<{ access_token: string; expires_in: number }>(
@@ -41,7 +39,7 @@ async function fetchToken(): Promise<string> {
       }
     )
 
-    const expiresAt = Date.now() + (result.expires_in - 60) * 1000
+    const expiresAt = Date.now() + (result.expires_in - 60) * 1000 // margen de 60s
 
     const tokenData: TokenCache = {
       token: result.access_token,
@@ -50,11 +48,11 @@ async function fetchToken(): Promise<string> {
 
     ;(globalThis as any)[cacheKey] = tokenData
 
-    console.log('✅ Token obtenido correctamente:', result.access_token)
+    console.log('✅ Nuevo token almacenado en cache')
 
     return result.access_token
   } catch (err: any) {
-    console.error('❌ Error al obtener el token:', err.message || err)
+    console.error('❌ Error al obtener el token:', err?.message || err)
     throw err
   }
 }
@@ -63,8 +61,9 @@ export async function getToken(): Promise<string> {
   const tokenData: TokenCache | undefined = (globalThis as any)[cacheKey]
 
   if (tokenData && Date.now() < tokenData.expiresAt) {
+    console.log('♻️ Usando token desde cache')
     return tokenData.token
   }
- console.log('🔁 Reusando token desde cache:', tokenData)
+
   return await fetchToken()
 }

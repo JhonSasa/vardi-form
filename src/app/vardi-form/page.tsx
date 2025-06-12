@@ -7,9 +7,14 @@ export default function HomePage() {
   const [status, setStatus] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [listas, setListas] = useState<{ [key: string]: { [key: string]: string } }>({})
+  const [contactoInfo, setContactoInfo] = useState<any>(null)
+  const [autorizoDatos, setAutorizoDatos] = useState(false)
+  const [canalesSeleccionados, setCanalesSeleccionados] = useState<string[]>([])
+  const canalesExcluidos = ['NINGUNA', 'OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE']
 
   const checkDocumento = async () => {
   console.log('👤 Verificando documento:', form.tipo_documento, form.numero_documento)
+ 
   const res = await fetch('/api/check-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -21,23 +26,39 @@ export default function HomePage() {
 
     const data = await res.json()
     console.log('👤 Resultado:', data)
-
+    setContactoInfo(data.contacto || null)
     // Aquí puedes setear visibilidad de campos si data.contacto o data.cuenta existe
   }
 
   useEffect(() => {
     checkDocumento()
   }, [form.tipo_documento, form.numero_documento])
+
   useEffect(() => {
     const cargarListas = async () => {
-      const res = await fetch('/api/sugar-list?name=sasa_tipo_documento_c&module=Contacts')
-      const data = await res.json()
-      console.log('📋 Listas obtenidas de SugarCRM:', data)
-      setListas((prev) => ({ ...prev, tipo_documento: data }))
+      const [docRes, solicitudRes, canalesRes] = await Promise.all([
+      fetch('/api/sugar-list?name=sasa_tipo_documento_c&module=Contacts'),
+      fetch('/api/sugar-list?name=sasa_tipo_solicitud_c&module=Leads'),
+      fetch('/api/sugar-list?name=sasa_canales_autorizados_c&module=SASA_Habeas_Data'),
+      ])
+
+    const [tipoDoc, tipoSolicitud, canales] = await Promise.all([
+      docRes.json(),
+      solicitudRes.json(),
+      canalesRes.json(),
+    ])
+
+    setListas({
+        tipo_documento: tipoDoc,
+        tipo_solicitud: tipoSolicitud,
+        canales_autorizados: canales,
+      })
     }
 
     cargarListas()
   }, [])
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -47,11 +68,18 @@ export default function HomePage() {
     setStatus(null)
     setLoading(true)
 
+    const payload = {
+      ...form,
+      canales_autorizados: canalesSeleccionados.map(val => `^${val}^`).join(','),
+    }
+
+    console.log('📦 Payload que se enviará:', payload)
+
     try {
         const res = await fetch('/api/send-contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form),
+          body: JSON.stringify(payload),
         })
 
         const result = await res.json()
@@ -75,6 +103,11 @@ export default function HomePage() {
       <h1 className="text-2xl font-bold mb-4">Formulario de contacto</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+      {contactoInfo && (
+          <div className="mt-4 p-4 border rounded bg-gray-50 text-sm">
+            <p><strong>Última modificación:</strong> {contactoInfo.date_modified}</p>
+          </div>
+        )}
       <select
         name="tipo_documento"
         value={form.tipo_documento}
@@ -90,24 +123,83 @@ export default function HomePage() {
             </option>
           ))}
         </select>
-        <input
-          type="text"
-          name="numero_documento"
-          placeholder="Número de documento"
-          value={form.numero_documento}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="text"
-          name="name"
-          placeholder="Tu nombre"
-          value={form.name}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-          required
-        />
+          <input
+            type="text"
+            name="numero_documento"
+            placeholder="Número de documento"
+            value={form.numero_documento}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
+          <input
+            type="text"
+            name="name"
+            placeholder="Nombres"
+            value={form.name}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
+        <div className="flex gap-4">
+          <input
+            type="text"
+            name="primer_apellido"
+            placeholder="Primer Apellido"
+            value={form.primer_apellido}
+            onChange={handleChange}
+            className="w-1/2 border p-2 rounded"
+            required
+          />
+          <input
+            type="text"
+            name="segundo_apellido"
+            placeholder="Segundo Apellido"
+            value={form.segundo_apellido}
+            onChange={handleChange}
+            className="w-1/2 border p-2 rounded"
+            required
+          />
+        </div>
+        {!contactoInfo && (
+          <select
+            name="sasa_tipo_solicitud_c"
+            value={form.sasa_tipo_solicitud_c || ''}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          >
+            <option value="">Selecciona tipo de solicitud</option>
+            {listas.tipo_solicitud &&
+              Object.entries(listas.tipo_solicitud).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+          </select>
+        )}
+
+        <div className="flex gap-4">
+          <input
+            type="text"
+            name="celular"
+            placeholder="Celular"
+            value={form.celular}
+            onChange={handleChange}
+            className="w-1/2 border p-2 rounded"
+            required
+          />
+          <input
+            type="text"
+            name="telefono"
+            placeholder="Teléfono"
+            value={form.telefono}
+            onChange={handleChange}
+            className="w-1/2 border p-2 rounded"
+            required
+          />
+        </div>
+
         <input
           type="email"
           name="email"
@@ -117,14 +209,55 @@ export default function HomePage() {
           className="w-full border p-2 rounded"
           required
         />
-        <textarea
-          name="message"
-          placeholder="Tu mensaje"
-          value={form.message}
-          onChange={handleChange}
-          className="w-full border p-2 rounded h-32"
-          required
-        />
+          
+        <label className="flex items-center space-x-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            id="cbox1"
+            checked={autorizoDatos}
+            onChange={(e) => setAutorizoDatos(e.target.checked)}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <span>Autorizo Datos Personales</span>
+        </label>
+        
+        {autorizoDatos && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Canales autorizados
+            </label>
+            <div className="grid gap-2">
+              {listas.canales_autorizados &&
+                Object.entries(listas.canales_autorizados)
+                  .filter(([, label]) => !canalesExcluidos.includes(label))
+                  .map(([key, label]) => {
+                    const selected = canalesSeleccionados.includes(key)
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => {
+                          const updated = selected
+                            ? canalesSeleccionados.filter((v) => v !== key)
+                            : [...canalesSeleccionados, key]
+
+                          console.log('📋 Canales actualizados:', updated)
+                          setCanalesSeleccionados(updated)
+                        }}
+                        className={`text-xs px-2 py-1 rounded border transition ${
+                          selected
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-white text-gray-700 border-gray-300'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
+            </div>
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={loading}
