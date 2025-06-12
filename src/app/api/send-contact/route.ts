@@ -1,50 +1,58 @@
 // app/api/send-contact/route.ts
 import { ApiService } from '@/lib/apiService'
+//import { getToken } from '@/lib/token'
+import { getToken } from '@/lib/token'
 
 export async function POST(req: Request) {
   const formData = await req.json()
 
-  const {
-    API_URL,
-    GRANT_TYPE,
-    CLIENT_ID,
-    CLIENT_SECRET,
-    USERNAME,
-    PASSWORD,
-    PLATFORM,
-  } = process.env
-
-  if (!API_URL || !USERNAME || !PASSWORD) {
-    return new Response(JSON.stringify({ error: 'Faltan variables de entorno' }), { status: 500 })
-  }
 
   try {
     // 1. Obtener el token usando ApiService (sin token inicial)
-    const authApi = new ApiService(API_URL)
-    const tokenResponse = await authApi.post<{ access_token: string }>('/rest/v11/oauth2/token', {
-      grant_type: GRANT_TYPE,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      username: USERNAME,
-      password: PASSWORD,
-      platform: PLATFORM,
-    })
-
-    const token = tokenResponse.access_token
-
-    if (!token) {
-      return new Response(JSON.stringify({ error: 'Token no recibido' }), { status: 401 })
-    }
+    const token = await getToken()
 
     // 2. Crear contacto usando el token
-    const contactApi = new ApiService(API_URL, token)
+    const api = new ApiService(process.env.API_URL!, token)
+    const hayCanales = formData.canales_autorizados && formData.canales_autorizados.replace(/\^/g, '').trim() !== ''
+    const payload = {
+        sasa_tipo_de_persona_c: 'N',
+        sasa_tipo_documento_c: formData.tipo_documento,
+        sasa_numero_documento_c: formData.numero_documento,
+        sasa_nombres_c: formData.name,
+        sasa_primerapellido_c: formData.primer_apellido,
+        sasa_last_name_2_c: formData.segundo_apellido,
+        sasa_phone_mobile_c: formData.celular || '',
+        sasa_cel_alternativo_c: formData.celular_alternativo || '',
+        sasa_tipo_solicitud_c: formData.sasa_tipo_solicitud_c || '',
+        sasa_compania_c: 2,
+        sasa_unidad_de_negocio_c: 210,
+        sasa_marcacion_ad_c: 1,
+        email: [
+          {
+            email_address: formData.email,
+            primary_address: true,
+            'email.opt_out': false,
+          },
+        ],
+        data: {
+          sasa_nombres_ad_c: formData.name,
+          sasa_primerapellido_ad_c: formData.primer_apellido,
+          sasa_last_name_2_ad_c: formData.segundo_apellido,
+          sasa_placa_ad_c: formData.placas,
+          sasa_cel_principal_ad_c: formData.celular,
+          sasa_cel_alternativo_ad_c: formData.celular_alternativo,
+          sasa_email_ad_c: formData.email,
+          sasa_marcacion_ad_c: 1,
+        },
+        documents_sasa_habeas_data_1documents_ida: 'cc60bd44-c2fd-11eb-99ce-0630baf9dcb8',
+        contacts_sasa_habeas_data_1contacts_ida: '', // puedes completar si ya tienes el contacto
+        leads_sasa_habeas_data_1leads_ida: '',
+        sasa_estado_autorizacion_c: 1,
+        sasa_auto_contactacion_c: hayCanales ? '2' : '1',
+        sasa_canales_autorizados_c: hayCanales ? formData.canales_autorizados : '',
+      }
 
-    const sugarResponse = await contactApi.post('/rest/v11/Contacts', {
-      first_name: formData.name,
-      last_name: 'Formulario Web',
-      email: [{ email_address: formData.email, primary_address: true }],
-      description: formData.message,
-    })
+      const sugarResponse = await api.post('/rest/v11/Api_update_data', payload)
 
     return new Response(JSON.stringify({ message: 'Contacto creado en SugarCRM', sugarResponse }), {
       headers: { 'Content-Type': 'application/json' },

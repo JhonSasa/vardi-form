@@ -11,6 +11,19 @@ export default function HomePage() {
   const [autorizoDatos, setAutorizoDatos] = useState(false)
   const [canalesSeleccionados, setCanalesSeleccionados] = useState<string[]>([])
   const canalesExcluidos = ['NINGUNA', 'OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE']
+  const [placas, setPlacas] = useState<string[]>([''])
+
+  const handlePlacaChange = (index: number, value: string) => {
+    const nuevasPlacas = [...placas]
+    nuevasPlacas[index] = value
+    setPlacas(nuevasPlacas)
+  }
+
+  const agregarPlaca = () => {
+    if (placas.length < 5) {
+      setPlacas([...placas, ''])
+    }
+  }
 
   const checkDocumento = async () => {
   console.log('👤 Verificando documento:', form.tipo_documento, form.numero_documento)
@@ -70,6 +83,8 @@ export default function HomePage() {
 
     const payload = {
       ...form,
+      autorizoDatos,
+      placas: placas.filter(p => p.trim() !== '').join(','),
       canales_autorizados: canalesSeleccionados.map(val => `^${val}^`).join(','),
     }
 
@@ -161,6 +176,30 @@ export default function HomePage() {
             required
           />
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Placas</label>
+          {placas.map((placa, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder={`Placa ${index + 1}`}
+              value={placa}
+              onChange={(e) => handlePlacaChange(index, e.target.value)}
+              className="w-full mb-2 border p-2 rounded text-sm"
+            />
+          ))}
+          {placas.length < 5 && (
+            <button
+              type="button"
+              onClick={agregarPlaca}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              + Agregar otra placa
+            </button>
+          )}
+        </div> 
+
         {!contactoInfo && (
           <select
             name="sasa_tipo_solicitud_c"
@@ -191,9 +230,9 @@ export default function HomePage() {
           />
           <input
             type="text"
-            name="telefono"
-            placeholder="Teléfono"
-            value={form.telefono}
+            name="celular_alternativo"
+            placeholder="Celular Alternativo"
+            value={form.celular_alternativo}
             onChange={handleChange}
             className="w-1/2 border p-2 rounded"
             required
