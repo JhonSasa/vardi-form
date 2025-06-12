@@ -16,17 +16,17 @@ export class ApiService {
     }
 
     if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`
+      headers['Authorization'] = `Bearer ${this.token}`
     }
 
     return headers
   }
 
-  async post<T>(endpoint: string, body: any): Promise<T> {
+  async get<T>(endpoint: string): Promise<T> {
+    console.log('📡 GET a:', `${this.baseUrl}${endpoint}`)
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'POST',
+      method: 'GET',
       headers: this.getHeaders(),
-      body: JSON.stringify(body),
     })
 
     if (!response.ok) {
@@ -38,4 +38,23 @@ export class ApiService {
 
     return await response.json()
   }
+
+
+  async post<T>(endpoint: string, body: any): Promise<T> {
+    console.log('📡 POST a:', `${this.baseUrl}${endpoint}`)
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(body),
+    })
+
+  if (!response.ok) {
+    const text = await response.text()
+    console.error(`❌ Error SugarCRM: ${text}`)
+    throw new Error(`SugarCRM: ${text}`)
+  }
+
+    return await response.json()
+  }
+
 }
