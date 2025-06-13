@@ -48,7 +48,7 @@ async function fetchToken(): Promise<string> {
 
     ;(globalThis as any)[cacheKey] = tokenData
 
-    console.log('✅ Nuevo token almacenado en cache')
+    console.log('✅ Nuevo token almacenado en cache:', result.access_token)
 
     return result.access_token
   } catch (err: any) {
@@ -61,7 +61,7 @@ export async function getToken(): Promise<string> {
   const tokenData: TokenCache | undefined = (globalThis as any)[cacheKey]
 
   if (tokenData && Date.now() < tokenData.expiresAt) {
-    console.log('♻️ Usando token desde cache')
+    console.log('♻️ Usando token desde cache', tokenData.token)
     return tokenData.token
   }
 

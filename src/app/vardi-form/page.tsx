@@ -3,7 +3,19 @@
 import { useState, useEffect } from 'react'
 
 export default function HomePage() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    message: '',
+    tipo_documento: '',
+    numero_documento: '',
+    primer_apellido: '',
+    segundo_apellido: '',
+    celular: '',
+    celular_alternativo: '',
+    sasa_tipo_solicitud_c: '',
+    placa: ''
+  })
   const [status, setStatus] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [listas, setListas] = useState<{ [key: string]: { [key: string]: string } }>({})
@@ -104,7 +116,7 @@ export default function HomePage() {
         }
 
         setStatus('✅ Contacto enviado a SugarCRM')
-        setForm({ name: '', email: '', message: '' })
+        //setForm({ name: '', email: '', message: '' })
         console.log('📨 Respuesta SugarCRM:', result.sugarResponse)
       } catch (error: any) {
         setStatus(`❌ Error al enviar: ${error.message}`)
