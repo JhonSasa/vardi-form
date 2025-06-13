@@ -5,7 +5,7 @@ import { getToken } from '@/lib/token'
 export async function POST(req: Request) {
   const body = await req.json()
   const { tipoDocumento, numeroDocumento } = body
-
+  
   if (!tipoDocumento || !numeroDocumento) {
     return new Response(JSON.stringify({ error: 'Faltan campos' }), { status: 400 })
   }
@@ -15,8 +15,14 @@ export async function POST(req: Request) {
     console.log('🔑 Token obtenido:', token)
     const api = new ApiService(process.env.API_URL!, token)
 
+    // Tipado genérico para la respuesta esperada
+    type SugarResponse = {
+      records?: any[]
+    }
+
+
     // 1. Buscar contacto
-    const contactos = await api.post('/rest/v11/Contacts/filter?fields=id,date_modified', {
+    const contactos = await api.post<SugarResponse>('/rest/v11/Contacts/filter?fields=id,date_modified', {
       filter: [
         {
           sasa_tipo_documento_c: tipoDocumento,
@@ -27,7 +33,7 @@ export async function POST(req: Request) {
     })
 
     // 2. Buscar cuenta
-    const cuentas = await api.post('/rest/v11/Accounts/filter?fields=id,date_modified', {
+    const cuentas = await api.post<SugarResponse>('/rest/v11/Accounts/filter?fields=id,date_modified', {
       filter: [
         {
           sasa_tipo_documento_c: tipoDocumento,
