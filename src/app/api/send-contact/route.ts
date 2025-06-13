@@ -58,9 +58,10 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     })
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: 'Error en el proceso', detail: error.message }), {
-      status: 500,
+  } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error desconocido'
+      return new Response(JSON.stringify({ error: 'Error en el proceso', detail: message }), {
+        status: 500,
     })
   }
 }

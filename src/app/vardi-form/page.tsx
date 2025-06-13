@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react'
 
 export default function HomePage() {
+  type ContactoInfo = {
+    id: string
+    date_modified: string
+  }
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -19,7 +23,7 @@ export default function HomePage() {
   const [status, setStatus] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [listas, setListas] = useState<{ [key: string]: { [key: string]: string } }>({})
-  const [contactoInfo, setContactoInfo] = useState<any>(null)
+  const [contactoInfo, setContactoInfo] = useState<ContactoInfo | null>(null)
   const [autorizoDatos, setAutorizoDatos] = useState(false)
   const [canalesSeleccionados, setCanalesSeleccionados] = useState<string[]>([])
   const canalesExcluidos = ['NINGUNA', 'OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE']
@@ -118,8 +122,12 @@ export default function HomePage() {
         setStatus('✅ Contacto enviado a SugarCRM')
         //setForm({ name: '', email: '', message: '' })
         console.log('📨 Respuesta SugarCRM:', result.sugarResponse)
-      } catch (error: any) {
-        setStatus(`❌ Error al enviar: ${error.message}`)
+      } catch (error) {
+          if (error instanceof Error) {
+            setStatus(`❌ Error al enviar: ${error.message}`)
+          } else {
+            setStatus('❌ Error desconocido al enviar')
+          }
       } finally {
         setLoading(false)
       }

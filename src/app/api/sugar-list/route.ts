@@ -12,16 +12,20 @@ export async function GET(req: Request) {
 
   try {
     const token = await getToken()
+    type EnumResponse = {
+      [key: string]: string
+    }
     const api = new ApiService(process.env.API_URL!, token)
 
-    const data = await api.get<any>(`/rest/v11/${moduleName}/enum/${listName}`)
+    const data = await api.get<EnumResponse>(`/rest/v11/${moduleName}/enum/${listName}`)
     console.log('📡 Datos obtenidos de SugarCRM:', data)
     return new Response(JSON.stringify(data), {
       headers: { 'Content-Type': 'application/json' },
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const detail = err instanceof Error ? err.message : 'Error desconocido'
     return new Response(
-      JSON.stringify({ error: 'Error al obtener la lista', detail: err.message }),
+      JSON.stringify({ error: 'Error al obtener la lista', detail }),
       { status: 500 }
     )
   }

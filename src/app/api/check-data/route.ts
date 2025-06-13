@@ -15,9 +15,14 @@ export async function POST(req: Request) {
     console.log('🔑 Token obtenido:', token)
     const api = new ApiService(process.env.API_URL!, token)
 
-    // Tipado genérico para la respuesta esperada
+    // Tipos específicos
+    type SugarRecord = {
+      id: string
+      date_modified: string
+    }
+
     type SugarResponse = {
-      records?: any[]
+      records?: SugarRecord[]
     }
 
 
@@ -50,9 +55,11 @@ export async function POST(req: Request) {
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     )
-  } catch (error: any) {
-    return new Response(
-      JSON.stringify({ error: 'Error en la consulta', detail: error.message }),
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Error desconocido'
+      return new Response(
+      JSON.stringify({ error: 'Error en la consulta', detail: message }),
       { status: 500 }
     )
   }
