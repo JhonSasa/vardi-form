@@ -1,5 +1,6 @@
 
 // lib/apiService.ts
+import { invalidateToken, getToken } from './token'
 export class ApiService {
   private baseUrl: string
   private token?: string
@@ -22,6 +23,29 @@ export class ApiService {
     return headers
   }
 
+  private async retryWithNewToken<T>(method: 'GET' | 'POST', endpoint: string, body?: any): Promise<T> {
+    await invalidateToken()
+    const newToken = await getToken()
+    this.token = newToken
+
+    const headers = this.getHeaders()
+    const url = `${this.baseUrl}${endpoint}`
+
+    const response = await fetch(url, {
+      method,
+      headers,
+      ...(method === 'POST' ? { body: JSON.stringify(body) } : {}),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`❌ Error tras reintento: ${errorText}`)
+      throw new Error(errorText)
+    }
+
+    return await response.json()
+  }
+
   async get<T>(endpoint: string): Promise<T> {
     console.log('📡 GET a:', `${this.baseUrl}${endpoint}`)
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -30,6 +54,9 @@ export class ApiService {
     })
 
     if (!response.ok) {
+      if (response.status === 401 || response.status === 500) {
+        return this.retryWithNewToken<T>('GET', endpoint)
+      }
       const errorData = await response.json().catch(() => null)
       throw new Error(
         errorData?.error || `Error ${response.status}: ${response.statusText}`
@@ -49,6 +76,9 @@ export class ApiService {
     })
 
   if (!response.ok) {
+      if (response.status === 401 || response.status === 500) {
+        return this.retryWithNewToken<T>('POST', endpoint, body)
+      }
     const text = await response.text()
     console.error(`❌ Error SugarCRM: ${text}`)
     throw new Error(`SugarCRM: ${text}`)

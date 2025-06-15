@@ -11,6 +11,11 @@ type GlobalWithToken = typeof globalThis & {
 
 const cacheKey = '__sugarcrm_token__'
 
+// 🔄 Invalida el token guardado en cache
+export async function invalidateToken(): Promise<void> {
+  delete (globalThis as GlobalWithToken)[cacheKey]
+}
+
 async function fetchToken(): Promise<string> {
   const {
     API_URL,
