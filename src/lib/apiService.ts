@@ -23,7 +23,7 @@ export class ApiService {
     return headers
   }
 
-  private async retryWithNewToken<T>(method: 'GET' | 'POST', endpoint: string, body?: any): Promise<T> {
+  private async retryWithNewToken<T, B = unknown>(method: 'GET' | 'POST', endpoint: string, body?: B): Promise<T> {
     await invalidateToken()
     const newToken = await getToken()
     this.token = newToken
