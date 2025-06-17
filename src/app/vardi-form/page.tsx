@@ -155,13 +155,16 @@ export default function HomePage() {
 
   return (
     <main className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">ACTUALIZACIÓN DE DATOS NISSAN</h1>
+      <div className="flex justify-center mb-4">
+        <img src="/Nissan_2020_logo.svg" alt="Logo Nissan" className="h-16" />
+      </div>
+      <h1 className="text-2xl font-bold mb-4 text-center">ACTUALIZACIÓN DE DATOS NISSAN</h1>
       <p className="text-sm text-gray-600 mb-4">
         Te invitamos a que actualices tus datos para que sigamos en contacto, fundamental para tu vehículo y conozcas de nuestras promociones y oferas espaciales para que tu NISSAN te acompañe mucho mas kilometros.
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
       {contactoInfo && (
-          <div className="mt-4 p-4 border rounded bg-gray-50 text-sm">
+          <div className="mt-4 p-4 border rounded bg-red-100 text-sm">
             <p><strong>Última modificación:</strong> {contactoInfo.date_modified}</p>
           </div>
         )}
@@ -215,7 +218,7 @@ export default function HomePage() {
             value={form.segundo_apellido}
             onChange={handleChange}
             className="w-1/2 border p-2 rounded"
-            required
+            
           />
         </div>
 
@@ -277,7 +280,7 @@ export default function HomePage() {
             value={form.celular_alternativo}
             onChange={handleChange}
             className="w-1/2 border p-2 rounded"
-            required
+            
           />
         </div>
 
@@ -298,6 +301,7 @@ export default function HomePage() {
             checked={autorizoDatos}
             onChange={(e) => setAutorizoDatos(e.target.checked)}
             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            required
           />
           <span>Autorizo el tratamiento de mis datos personales</span>
         </label>
@@ -343,6 +347,7 @@ export default function HomePage() {
           type="submit"
           disabled={loading}
           className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50 display-block w-full text-center transition duration-200 disabled:cursor-not-allowed"
+          
         >
           {loading ? 'Enviando...' : 'Enviar'}
         </button>
