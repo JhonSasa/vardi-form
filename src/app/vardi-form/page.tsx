@@ -7,6 +7,13 @@ export default function HomePage() {
     id: string
     date_modified: string
   }
+  type SendContactResponse = {
+    message: string
+    sugarResponse: unknown
+  } | {
+    error: string
+    detail: string
+  }
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -113,15 +120,28 @@ export default function HomePage() {
           body: JSON.stringify(payload),
         })
 
-        const result = await res.json()
+        const contentType = res.headers.get('Content-Type') || ''
+
+        let result: SendContactResponse
+
+        if (contentType.includes('application/json')) {
+          result = await res.json()
+        } else {
+          const text = await res.text()
+          console.error('⚠️ Respuesta inesperada del servidor:', text)
+          throw new Error('Respuesta inesperada del servidor. Intenta más tarde.')
+        }
 
         if (!res.ok) {
-          throw new Error(result.error || 'No se pudo enviar')
+          if ('error' in result) {
+            throw new Error(result.error)
+          }
+          throw new Error('No se pudo enviar')
         }
 
         setStatus('✅ Contacto enviado a SugarCRM')
         //setForm({ name: '', email: '', message: '' })
-        console.log('📨 Respuesta SugarCRM:', result.sugarResponse)
+        console.log('📨 Respuesta SugarCRM:', result)
       } catch (error) {
           if (error instanceof Error) {
             setStatus(`❌ Error al enviar: ${error.message}`)
