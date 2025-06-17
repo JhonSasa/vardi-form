@@ -1,8 +1,11 @@
 'use client'
+import ReCAPTCHA from 'react-google-recaptcha'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 export default function HomePage() {
+
+  const recaptchaRef = useRef<InstanceType<typeof ReCAPTCHA>>(null)
   type ContactoInfo = {
     id: string
     date_modified: string
@@ -104,11 +107,18 @@ export default function HomePage() {
     setStatus(null)
     setLoading(true)
 
+    const recaptchaToken = await recaptchaRef.current?.executeAsync()
+    if (!recaptchaToken) {
+      setStatus("❌ Verifica el reCAPTCHA antes de enviar.")
+      return
+    }
+
     const payload = {
       ...form,
       autorizoDatos,
       placas: placas.filter(p => p.trim() !== '').join(','),
       canales_autorizados: canalesSeleccionados.map(val => `^${val}^`).join(','),
+      recaptchaToken,
     }
 
     console.log('📦 Payload que se enviará:', payload)
@@ -342,7 +352,12 @@ export default function HomePage() {
             </div>
           </div>
         )}
-
+        <ReCAPTCHA
+          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+          ref={recaptchaRef}
+          onChange={(token: string | null) => console.log("✅ reCAPTCHA token:", token)}
+          className="mt-4"
+        />
         <button
           type="submit"
           disabled={loading}
