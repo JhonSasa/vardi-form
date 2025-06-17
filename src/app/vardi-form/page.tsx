@@ -155,8 +155,10 @@ export default function HomePage() {
 
   return (
     <main className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Formulario de contacto</h1>
-
+      <h1 className="text-2xl font-bold mb-4">ACTUALIZACIÓN DE DATOS NISSAN</h1>
+      <p className="text-sm text-gray-600 mb-4">
+        Te invitamos a que actualices tus datos para que sigamos en contacto, fundamental para tu vehículo y conozcas de nuestras promociones y oferas espaciales para que tu NISSAN te acompañe mucho mas kilometros.
+      </p>
       <form onSubmit={handleSubmit} className="space-y-4">
       {contactoInfo && (
           <div className="mt-4 p-4 border rounded bg-gray-50 text-sm">
@@ -235,7 +237,7 @@ export default function HomePage() {
               onClick={agregarPlaca}
               className="text-sm text-blue-600 hover:underline"
             >
-              + Agregar otra placa
+              + Tengo otro vehículo
             </button>
           )}
         </div> 
@@ -297,9 +299,9 @@ export default function HomePage() {
             onChange={(e) => setAutorizoDatos(e.target.checked)}
             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <span>Autorizo Datos Personales</span>
+          <span>Autorizo el tratamiento de mis datos personales</span>
         </label>
-        
+        <p className="text-sm text-gray-600 mb-4">Te invitamos a leer la finalidad sobre tus datos personales, contenidos en la <a href="https://www.nissan.com.co/privacidad.html" target='_blank' className="text-blue-600 hover:underline">política de información de Dinissan</a>.</p>
         {autorizoDatos && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -325,7 +327,7 @@ export default function HomePage() {
                         }}
                         className={`text-xs px-2 py-1 rounded border transition ${
                           selected
-                            ? 'bg-blue-600 text-white border-blue-600'
+                            ? 'bg-red-600 text-white border-red-600'
                             : 'bg-white text-gray-700 border-gray-300'
                         }`}
                       >
@@ -340,7 +342,7 @@ export default function HomePage() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50 display-block w-full text-center transition duration-200 disabled:cursor-not-allowed"
         >
           {loading ? 'Enviando...' : 'Enviar'}
         </button>
