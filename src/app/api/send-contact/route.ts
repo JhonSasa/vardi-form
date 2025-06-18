@@ -5,21 +5,6 @@ import { getToken } from '@/lib/token'
 
 export async function POST(req: Request) {
   const formData = await req.json()
-  const { recaptchaToken } = formData // ✅ extraer el token
-
-  const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-  method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      secret: process.env.RECAPTCHA_SECRET_KEY!,
-      response: recaptchaToken,
-    }),
-  })
-
-  const recaptchaResult = await res.json()
-  if (!recaptchaResult.success) {
-    return new Response(JSON.stringify({ error: 'Fallo reCAPTCHA' }), { status: 400 })
-  }
 
   try {
     // 1. Obtener el token usando ApiService (sin token inicial)

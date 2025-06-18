@@ -1,11 +1,10 @@
 'use client'
 import ReCAPTCHA from 'react-google-recaptcha'
-
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function HomePage() {
 
-  const recaptchaRef = useRef<InstanceType<typeof ReCAPTCHA>>(null)
+const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   type ContactoInfo = {
     id: string
     date_modified: string
@@ -101,24 +100,22 @@ export default function HomePage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
-
+  const onChangeRecaptcha = (token: string | null) => {
+    console.log('✅ reCAPTCHA token:', token)
+    setRecaptchaToken(token)
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus(null)
     setLoading(true)
-
-    const recaptchaToken = await recaptchaRef.current?.executeAsync()
-    if (!recaptchaToken) {
-      setStatus("❌ Verifica el reCAPTCHA antes de enviar.")
-      return
-    }
+  
 
     const payload = {
       ...form,
       autorizoDatos,
       placas: placas.filter(p => p.trim() !== '').join(','),
       canales_autorizados: canalesSeleccionados.map(val => `^${val}^`).join(','),
-      recaptchaToken,
+
     }
 
     console.log('📦 Payload que se enviará:', payload)
@@ -352,15 +349,16 @@ export default function HomePage() {
             </div>
           </div>
         )}
-        <ReCAPTCHA
-          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-          ref={recaptchaRef}
-          onChange={(token: string | null) => console.log("✅ reCAPTCHA token:", token)}
-          className="mt-4"
-        />
+        <div className="flex justify-center mt-4">
+          <ReCAPTCHA
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+            onChange={onChangeRecaptcha}
+            className="mt-4"
+          />
+        </div>
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !recaptchaToken}
           className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50 display-block w-full text-center transition duration-200 disabled:cursor-not-allowed"
           
         >
