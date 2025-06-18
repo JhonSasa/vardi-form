@@ -119,7 +119,12 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
       canales_autorizados: canalesSeleccionados.map(val => `^${val}^`).join(','),
 
     }
-
+    // Validar placa
+    if (placas.filter(p => p.trim() !== '').length === 0) {
+      setStatus('❌ Debes ingresar al menos una placa.')
+      setLoading(false)
+      return
+    }
     console.log('📦 Payload que se enviará:', payload)
 
     try {
@@ -236,25 +241,45 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Placas</label>
           {placas.map((placa, index) => (
-            <input
-              key={index}
-              type="text"
-              placeholder={`Placa ${index + 1}`}
-              value={placa}
-              onChange={(e) => handlePlacaChange(index, e.target.value)}
-              className="w-full mb-2 border p-2 rounded text-sm"
-            />
+            <div key={index} className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                placeholder={`Placa ${index + 1}`}
+                value={placa}
+                onChange={(e) => handlePlacaChange(index, e.target.value)}
+                className="flex-1 border p-2 rounded text-sm"
+                required={index === 0}
+              />
+
+              {/* Botón + solo en el último campo */}
+              {index === placas.length - 1 && placas.length < 5 && (
+                <button
+                  type="button"
+                  onClick={agregarPlaca}
+                  title="Agregar otra placa"
+                  className="px-2 py-1 rounded border border-green-500 bg-green-100 text-green-700 hover:bg-green-200 transition"
+                >
+                  +
+                </button>
+              )}
+
+              {/* Botón - si hay más de una placa */}
+              {placas.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nuevas = placas.filter((_, i) => i !== index)
+                    setPlacas(nuevas)
+                  }}
+                  title="Eliminar esta placa"
+                  className="px-2 py-1 rounded border border-red-500 bg-red-100 text-red-700 hover:bg-red-200 transition"
+                >
+                  −
+                </button>
+              )}
+            </div>
           ))}
-          {placas.length < 5 && (
-            <button
-              type="button"
-              onClick={agregarPlaca}
-              className="text-sm text-blue-600 hover:underline"
-            >
-              + Tengo otro vehículo
-            </button>
-          )}
-        </div> 
+        </div>
 
         {!contactoInfo && (
           <select
