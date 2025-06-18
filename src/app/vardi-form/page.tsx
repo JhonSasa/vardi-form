@@ -37,7 +37,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [canalesSeleccionados, setCanalesSeleccionados] = useState<string[]>([])
   const canalesExcluidos = ['OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE']
   const tiposExcluidos = ['NIT', 'NO IDENTIFICADO','']
-  const solicitudesExcluidas = ['SOLICITUD TEST DRIVE', 'SOLICITUD INFORMACIÓN ADMINISTRATIVA','INFORMACIÓN EVENTO', 'PENDIENTE POR CLASIFICAR', 'INFORMACIÓN COTIZACIÓN USADOS' , 'INFORMACIÓN PRECIO DE VEHÍCULOS', 'INFORMACIÓN COTIZACIÓN VEHICULOS NUEVOS', 'SOLICITUD INFORMACIÓN VEHÍCULOS', '']
+  const solicitudesExcluidas = ['SOLICITUD TEST DRIVE', 'SOLICITUD INFORMACIÓN ADMINISTRATIVA','INFORMACIÓN EVENTO', 'PENDIENTE DE CLASIFICAR', 'INFORMACIÓN COTIZACIÓN USADOS' , 'INFORMACIÓN PRECIO DE VEHÍCULOS', 'INFORMACIÓN COTIZACIÓN VEHICULOS NUEVOS', 'SOLICITUD INFORMACIÓN VEHÍCULOS', '', 'INFORMACIÓN COTIZACIÓN SEGUROS DE AUTOS']
   const [placas, setPlacas] = useState<string[]>([''])
 
   const handlePlacaChange = (index: number, value: string) => {
