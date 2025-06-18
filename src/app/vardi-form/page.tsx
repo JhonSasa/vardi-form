@@ -1,6 +1,7 @@
 'use client'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 
 export default function HomePage() {
 
@@ -153,14 +154,30 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
           throw new Error('No se pudo enviar')
         }
 
-        setStatus('✅ Contacto enviado a SugarCRM')
+        //setStatus('✅ Contacto enviado a SugarCRM')
+        toast.success('✅ Contacto enviado a SugarCRM',{
+          duration: 8000,
+          position: 'top-right',
+          style: {
+            background: '#f0f4c3',
+            color: '#33691e',
+            fontWeight: 'bold',
+          },
+        })
         //setForm({ name: '', email: '', message: '' })
         console.log('📨 Respuesta SugarCRM:', result)
       } catch (error) {
           if (error instanceof Error) {
-            setStatus(`❌ Error al enviar: ${error.message}`)
+            //setStatus(`❌ Error al enviar: ${error.message}`)
+            toast.error(`❌ ${error.message}`,{
+              duration: 8000,
+              position: 'top-right',
+            })
           } else {
-            setStatus('❌ Error desconocido al enviar')
+            toast.error('❌ Error desconocido al enviar', {
+              duration: 8000,
+              position: 'top-right',
+            })
           }
       } finally {
         setLoading(false)
