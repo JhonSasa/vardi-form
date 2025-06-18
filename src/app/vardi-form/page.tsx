@@ -35,7 +35,9 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [contactoInfo, setContactoInfo] = useState<ContactoInfo | null>(null)
   const [autorizoDatos, setAutorizoDatos] = useState(false)
   const [canalesSeleccionados, setCanalesSeleccionados] = useState<string[]>([])
-  const canalesExcluidos = ['NINGUNA', 'OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE']
+  const canalesExcluidos = ['OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE']
+  const tiposExcluidos = ['NIT', 'NO IDENTIFICADO','']
+  const solicitudesExcluidas = ['SOLICITUD TEST DRIVE', 'SOLICITUD INFORMACIÓN ADMINISTRATIVA','INFORMACIÓN EVENTO', 'PENDIENTE POR CLASIFICAR', 'INFORMACIÓN COTIZACIÓN USADOS' , 'INFORMACIÓN PRECIO DE VEHÍCULOS', 'INFORMACIÓN COTIZACIÓN VEHICULOS NUEVOS', 'SOLICITUD INFORMACIÓN VEHÍCULOS', '']
   const [placas, setPlacas] = useState<string[]>([''])
 
   const handlePlacaChange = (index: number, value: string) => {
@@ -184,7 +186,9 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
       >
         <option value="">Selecciona tipo de documento</option>
         {listas.tipo_documento &&
-          Object.entries(listas.tipo_documento).map(([key, label]) => (
+          Object.entries(listas.tipo_documento)
+            .filter(([, label]) => !tiposExcluidos.includes(label))
+            .map(([key, label]) => (
             <option key={key} value={key}>
               {label}
             </option>
@@ -262,7 +266,9 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
           >
             <option value="">Selecciona tipo de solicitud</option>
             {listas.tipo_solicitud &&
-              Object.entries(listas.tipo_solicitud).map(([key, label]) => (
+              Object.entries(listas.tipo_solicitud)
+              .filter(([, label]) => !solicitudesExcluidas.includes(label))
+              .map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
                 </option>
