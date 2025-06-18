@@ -25,6 +25,9 @@ export async function POST(req: Request) {
         sasa_tipo_solicitud_c: formData.sasa_tipo_solicitud_c || '',
         sasa_compania_c: 2,
         sasa_unidad_de_negocio_c: 210,
+        cd_area_c:21010,
+        lead_source:20,
+        sasa_detalle_origen_c:25,
         sasa_marcacion_ad_c: 1,
         email: [
           {
@@ -47,8 +50,11 @@ export async function POST(req: Request) {
         contacts_sasa_habeas_data_1contacts_ida: '', // puedes completar si ya tienes el contacto
         leads_sasa_habeas_data_1leads_ida: '',
         sasa_estado_autorizacion_c: 1,
+        sasa_revision_c:'V',
+        sasa_fuente_autorizacion_c:'W',
         sasa_auto_contactacion_c: hayCanales ? '2' : '1',
         sasa_canales_autorizados_c: hayCanales ? formData.canales_autorizados : '',
+        description:'Ingreso por formulario actualización de datos'
       }
 
       const sugarResponse = await api.post('/rest/v11/Api_update_data', payload)
