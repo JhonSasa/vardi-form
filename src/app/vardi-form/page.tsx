@@ -210,74 +210,104 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
       <div className="flex justify-center mb-4">
         <img src="/Nissan_2020_logo.svg" alt="Logo Nissan" className="h-16" />
       </div>
-      <h1 className="text-2xl font-bold mb-4 text-center">ACTUALIZACIÓN DE DATOS NISSAN</h1>
-      <p className="text-sm text-gray-600 mb-4">
+      <h1 className="text-2xl font-nissanBold mb-4 text-center">ACTUALIZACIÓN DE DATOS NISSAN</h1>
+      <p className="text-sm text-gray-600 mb-4 text-2xl">
         Te invitamos a que actualices tus datos para que sigamos en contacto, fundamental para tu vehículo y conozcas de nuestras promociones y oferas espaciales para que tu NISSAN te acompañe mucho mas kilometros.
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
       {contactoInfo && (
-          <div className="mt-4 p-4 border rounded bg-red-100 text-sm">
+          <div className="mt-4 p-4 border bg-red-100 text-sm">
             <p><strong>Última modificación:</strong> {contactoInfo.date_modified}</p>
           </div>
         )}
-      <select
-        name="tipo_documento"
-        value={form.tipo_documento}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-        required
-      >
-        <option value="">Selecciona tipo de documento</option>
-        {listas.tipo_documento &&
-          Object.entries(listas.tipo_documento)
-            .filter(([, label]) => !tiposExcluidos.includes(label))
-            .map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
+      <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">Tipo de Documento <span className="vardi-color">*</span></label>
+      <div className="relative w-full">
+        <select
+          name="tipo_documento"
+          value={form.tipo_documento}
+          onChange={handleChange}
+          className="appearance-none w-full border p-2 pr-10 font-nissanLight text-sm"
+          required
+        >
+          <option value="">Selecciona tipo de documento</option>
+          {listas.tipo_documento &&
+            Object.entries(listas.tipo_documento)
+              .filter(([, label]) => !tiposExcluidos.includes(label))
+              .map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
         </select>
+        <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center px-2">
+          <div className="border-l border-gray-300 h-5 mr-2" />
+          <svg
+            className="w-4 h-4 vardi-color"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 12a1 1 0 0 1-.7-.29l-3-3a1 1 0 0 1 1.4-1.42L10 9.58l2.3-2.3a1 1 0 1 1 1.4 1.42l-3 3A1 1 0 0 1 10 12z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+      </div>
+        <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">Número de Documento <span className="vardi-color">*</span></label>
           <input
             type="text"
             name="numero_documento"
             placeholder="Número de documento"
             value={form.numero_documento}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             required
           />
+          <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">Nombres <span className="vardi-color">*</span></label>
           <input
             type="text"
             name="name"
             placeholder="Nombres"
             value={form.name}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border p-2"
             required
           />
-        <div className="flex gap-4">
-          <input
-            type="text"
-            name="primer_apellido"
-            placeholder="Primer Apellido"
-            value={form.primer_apellido}
-            onChange={handleChange}
-            className="w-1/2 border p-2 rounded"
-            required
-          />
-          <input
-            type="text"
-            name="segundo_apellido"
-            placeholder="Segundo Apellido"
-            value={form.segundo_apellido}
-            onChange={handleChange}
-            className="w-1/2 border p-2 rounded"
-            
-          />
-        </div>
+
+          <div className="flex gap-4">
+            <div className="flex flex-col w-1/2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">
+                Primer apellido <span className="vardi-color">*</span>
+              </label>
+              <input
+                type="text"
+                name="primer_apellido"
+                placeholder="Primer Apellido"
+                value={form.primer_apellido}
+                onChange={handleChange}
+                className="border p-2"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col w-1/2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">
+                Segundo apellido
+              </label>
+              <input
+                type="text"
+                name="segundo_apellido"
+                placeholder="Segundo Apellido"
+                value={form.segundo_apellido}
+                onChange={handleChange}
+                className="border p-2"
+              />
+            </div>
+          </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Placas</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">Placas <span className="vardi-color">*</span></label>
           {placas.map((placa, index) => (
             <div key={index} className="flex items-center gap-2 mb-2">
               <input
@@ -285,7 +315,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
                 placeholder={`Placa ${index + 1}`}
                 value={placa}
                 onChange={(e) => handlePlacaChange(index, e.target.value)}
-                className="flex-1 border p-2 rounded text-sm"
+                className="flex-1 border p-2 text-sm"
                 required={index === 0}
                 pattern="^[A-Za-z][A-Za-z0-9]{5}$"
                 title="Debe empezar con una letra y tener máximo 6 caracteres"
@@ -297,7 +327,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
                   type="button"
                   onClick={agregarPlaca}
                   title="Agregar otra placa"
-                  className="px-2 py-1 rounded border border-green-500 bg-green-100 text-green-700 hover:bg-green-200 transition"
+                  className="px-2 py-1 border border-green-500 bg-green-100 text-green-700 hover:bg-green-200 transition"
                 >
                   +
                 </button>
@@ -312,7 +342,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
                     setPlacas(nuevas)
                   }}
                   title="Eliminar esta placa"
-                  className="px-2 py-1 rounded border border-red-500 bg-red-100 text-red-700 hover:bg-red-200 transition"
+                  className="px-2 py-1 border border-red-500 bg-red-100 text-red-700 hover:bg-red-200 transition"
                 >
                   −
                 </button>
@@ -322,56 +352,86 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
         </div>
 
         {!contactoInfo && (
-          <select
-            name="sasa_tipo_solicitud_c"
-            value={form.sasa_tipo_solicitud_c || ''}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          >
-            <option value="">Selecciona tipo de solicitud</option>
-            {listas.tipo_solicitud &&
-              Object.entries(listas.tipo_solicitud)
-              .filter(([, label]) => !solicitudesExcluidas.includes(label))
-              .map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-          </select>
+        <div className="flex flex-col relative w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">
+            Tipo de solicitud <span className="vardi-color">*</span>
+          </label>
+
+          <div className="relative">
+            <select
+              name="sasa_tipo_solicitud_c"
+              value={form.sasa_tipo_solicitud_c || ''}
+              onChange={handleChange}
+              className="appearance-none w-full border p-2 pr-10 font-nissanLight text-sm"
+              required
+            >
+              <option value="">Selecciona tipo de solicitud</option>
+              {listas.tipo_solicitud &&
+                Object.entries(listas.tipo_solicitud)
+                  .filter(([, label]) => !solicitudesExcluidas.includes(label))
+                  .map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+            </select>
+
+            {/* Línea divisoria y flecha, perfectamente centradas */}
+            <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+              <div className="border-l border-gray-300 h-5 mr-2" />
+              <svg
+                className="w-4 h-4 vardi-color"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 12a1 1 0 0 1-.7-.29l-3-3a1 1 0 0 1 1.4-1.42L10 9.58l2.3-2.3a1 1 0 1 1 1.4 1.42l-3 3A1 1 0 0 1 10 12z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
         )}
 
         <div className="flex gap-4">
-          <input
-            type="text"
-            name="celular"
-            placeholder="Celular"
-            value={form.celular}
-            onChange={handleChange}
-            className="w-1/2 border p-2 rounded"
-            pattern="3[0-9]{9}"
-            title="Debe comenzar por 3 y tener 10 dígitos"
-            required
-          />
-          <input
-            type="text"
-            name="celular_alternativo"
-            placeholder="Celular Alternativo"
-            value={form.celular_alternativo}
-            onChange={handleChange}
-            className="w-1/2 border p-2 rounded"
-            pattern="3[0-9]{9}"
-            title="Debe comenzar por 3 y tener 10 dígitos"
-          />
+          <div className="flex flex-col w-1/2">
+            <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">Celular <span className="vardi-color">*</span></label>
+            <input
+              type="text"
+              name="celular"
+              placeholder="Celular"
+              value={form.celular}
+              onChange={handleChange}
+              className="border p-2"
+              pattern="3[0-9]{9}"
+              title="Debe comenzar por 3 y tener 10 dígitos"
+              required
+            />
+          </div>
+          <div className="flex flex-col w-1/2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">Celular Alternativo</label>
+              <input
+                type="text"
+                name="celular_alternativo"
+                placeholder="Celular Alternativo"
+                value={form.celular_alternativo}
+                onChange={handleChange}
+                className="border p-2"
+                pattern="3[0-9]{9}"
+                title="Debe comenzar por 3 y tener 10 dígitos"
+              />
+          </div>
         </div>
-
+        <label className="block text-sm font-medium text-gray-700 mb-1 font-nissanBold">Correo electrónico <span className="vardi-color">*</span></label>
         <input
           type="email"
           name="email"
           placeholder="Tu correo"
           value={form.email}
           onChange={handleChange}
-          className="w-full border p-2 rounded"
+          className="w-full border p-2"
           required
         />
           
@@ -381,10 +441,10 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
             id="cbox1"
             checked={autorizoDatos}
             onChange={(e) => setAutorizoDatos(e.target.checked)}
-            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
             required
           />
-          <span>Autorizo el tratamiento de mis datos personales</span>
+          <span>Autorizo el tratamiento de mis datos personales <span className="vardi-color">*</span></span>
         </label>
         <p className="text-sm text-gray-600 mb-4">Te invitamos a leer la finalidad sobre tus datos personales, contenidos en la <a href="https://www.nissan.com.co/privacidad.html" target='_blank' className="text-blue-600 hover:underline">política de información de Dinissan</a>.</p>
         {autorizoDatos && (
@@ -410,7 +470,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
                           console.log('📋 Canales actualizados:', updated)
                           setCanalesSeleccionados(updated)
                         }}
-                        className={`text-xs px-2 py-1 rounded border transition ${
+                        className={`text-xs px-2 py-1 border transition ${
                           selected
                             ? 'bg-red-600 text-white border-red-600'
                             : 'bg-white text-gray-700 border-gray-300'
@@ -433,11 +493,12 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
         <button
           type="submit"
           disabled={loading || !recaptchaToken}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50 display-block w-full text-center transition duration-200 disabled:cursor-not-allowed"
+          className="bg-vardi-color text-white px-4 py-2 hover:bg-red-700 disabled:opacity-50 display-block w-full text-center transition duration-200 disabled:cursor-not-allowed"
           
         >
           {loading ? 'Enviando...' : 'Enviar'}
         </button>
+        <div><span className="vardi-color">*</span>Campos obligatorios</div>
       </form>
 
       {status && <p className="mt-4 text-sm">{status}</p>}
