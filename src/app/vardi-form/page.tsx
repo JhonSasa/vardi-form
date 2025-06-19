@@ -472,7 +472,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
                         }}
                         className={`text-xs px-2 py-1 border transition ${
                           selected
-                            ? 'bg-red-600 text-white border-red-600'
+                            ? 'bg-vardi-color text-white border-red-600'
                             : 'bg-white text-gray-700 border-gray-300'
                         }`}
                       >
