@@ -36,7 +36,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const [contactoInfo, setContactoInfo] = useState<ContactoInfo | null>(null)
   const [autorizoDatos, setAutorizoDatos] = useState(false)
   const [canalesSeleccionados, setCanalesSeleccionados] = useState<string[]>([])
-  const canalesExcluidos = ['OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE']
+  const canalesExcluidos = ['OFICINA', 'FAX', '', 'DIRECCIÓN FÍSICA', 'TELÉFONO FIJO', 'PERSONALMENTE', 'NINGUNA']
   const tiposExcluidos = ['NIT', 'NO IDENTIFICADO','']
   const solicitudesExcluidas = ['SOLICITUD TEST DRIVE', 'SOLICITUD INFORMACIÓN ADMINISTRATIVA','INFORMACIÓN EVENTO', 'PENDIENTE DE CLASIFICAR', 'INFORMACIÓN COTIZACIÓN USADOS' , 'INFORMACIÓN PRECIO DE VEHÍCULOS', 'INFORMACIÓN COTIZACIÓN  VEHÍCULOS NUEVOS', 'SOLICITUD INFORMACIÓN VEHÍCULOS', '', 'INFORMACIÓN COTIZACIÓN SEGURO DE AUTOS']
   const [placas, setPlacas] = useState<string[]>([''])
@@ -104,7 +104,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
     setForm({ ...form, [e.target.name]: e.target.value })
   }
   const onChangeRecaptcha = (token: string | null) => {
-    console.log('✅ reCAPTCHA token:', token)
+    //console.log('✅ reCAPTCHA token:', token)
     setRecaptchaToken(token)
   }
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,10 +122,31 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
     }
     // Validar placa
     if (placas.filter(p => p.trim() !== '').length === 0) {
-      setStatus('❌ Debes ingresar al menos una placa.')
+      toast.error('❌ Debes ingresar al menos una placa.', {
+        duration: 8000,
+        position: 'top-right',
+      })
       setLoading(false)
       return
     }
+    const placasInvalidas = placas.filter(p => !/^[A-Za-z][A-Za-z0-9]{5}$/.test(p))
+    if (placasInvalidas.length > 0) {
+      toast.error('❌ Cada placa debe comenzar con una letra y tener máximo 6 caracteres', {
+        duration: 8000,
+        position: 'top-right',
+      })
+      setLoading(false)
+      return
+    }
+    if (!/^3\d{9}$/.test(form.celular)) {
+      toast.error('❌ El celular debe comenzar por 3 y tener 10 dígitos', {
+        duration: 8000,
+        position: 'top-right',
+      })
+      setLoading(false)
+      return
+    }
+
     console.log('📦 Payload que se enviará:', payload)
 
     try {
@@ -266,6 +287,8 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
                 onChange={(e) => handlePlacaChange(index, e.target.value)}
                 className="flex-1 border p-2 rounded text-sm"
                 required={index === 0}
+                pattern="^[A-Za-z][A-Za-z0-9]{5}$"
+                title="Debe empezar con una letra y tener máximo 6 caracteres"
               />
 
               {/* Botón + solo en el último campo */}
@@ -326,6 +349,8 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
             value={form.celular}
             onChange={handleChange}
             className="w-1/2 border p-2 rounded"
+            pattern="3[0-9]{9}"
+            title="Debe comenzar por 3 y tener 10 dígitos"
             required
           />
           <input
@@ -335,7 +360,8 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
             value={form.celular_alternativo}
             onChange={handleChange}
             className="w-1/2 border p-2 rounded"
-            
+            pattern="3[0-9]{9}"
+            title="Debe comenzar por 3 y tener 10 dígitos"
           />
         </div>
 
