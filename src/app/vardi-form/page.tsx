@@ -441,7 +441,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
             id="cbox1"
             checked={autorizoDatos}
             onChange={(e) => setAutorizoDatos(e.target.checked)}
-            className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+            className="custom-checkbox"
             required
           />
           <span>Autorizo el tratamiento de mis datos personales <span className="vardi-color">*</span></span>

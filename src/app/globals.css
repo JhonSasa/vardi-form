@@ -50,6 +50,26 @@
   background-color: var(--vardi-color);
 }
 
+.custom-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #000000;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+}
+
+.custom-checkbox:checked::after {
+  content: "✔";
+  color: var(--vardi-color); /* Rojo puro */
+  font-size: 12px;
+  position: absolute;
+  top: 1;
+  left: 5px;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
