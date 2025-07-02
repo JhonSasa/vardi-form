@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 
 export default function HomePage() {
-
+const [siteKey, setSiteKey] = useState<string>('') // Estado para el sitekey
 const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   type ContactoInfo = {
     id: string
@@ -99,6 +99,14 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
     cargarListas()
   }, [])
 
+  useEffect(() => {
+    fetch('/api/env')
+      .then(res => res.json())
+      .then(data => {
+        //console.log('🔑 DATA DESDE /api/env:', data.sitekey);
+        setSiteKey(data.sitekey);
+      });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -483,13 +491,19 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
             </div>
           </div>
         )}
-        <div className="flex justify-center mt-4">
-          <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-            onChange={onChangeRecaptcha}
-            className="mt-4"
-          />
-        </div>
+        {siteKey ? (
+          <div className="flex justify-center mt-4">
+            <ReCAPTCHA 
+              sitekey={siteKey}
+              onChange={onChangeRecaptcha}
+              className="mt-4"
+            />
+          </div>
+        ) : (
+          <div className="flex justify-center mt-4">
+            <p className="text-sm text-gray-500">Cargando reCAPTCHA...</p>
+          </div>
+        )}
         <button
           type="submit"
           disabled={loading || !recaptchaToken}
