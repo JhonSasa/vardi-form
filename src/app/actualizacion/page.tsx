@@ -193,6 +193,26 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
             fontWeight: 'bold',
           },
         })
+
+        // Resetear formulario después del envío exitoso
+        setForm({
+          name: '',
+          email: '',
+          message: '',
+          tipo_documento: '',
+          numero_documento: '',
+          primer_apellido: '',
+          segundo_apellido: '',
+          celular: '',
+          celular_alternativo: '',
+          sasa_tipo_solicitud_c: '',
+          placa: ''
+        })
+        setPlacas([''])
+        setAutorizoDatos(false)
+        setCanalesSeleccionados([])
+        setRecaptchaToken(null)
+        setContactoInfo(null)
         //setForm({ name: '', email: '', message: '' })
         console.log('📨 Respuesta SugarCRM:', result)
       } catch (error) {

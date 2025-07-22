@@ -36,6 +36,7 @@ export async function POST(req: Request) {
             'email.opt_out': false,
           },
         ],
+        sasa_placa_ad_c: formData.placas,
         data: {
           sasa_nombres_ad_c: formData.name,
           sasa_primerapellido_ad_c: formData.primer_apellido,
