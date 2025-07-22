@@ -2,6 +2,7 @@
 import ReCAPTCHA from 'react-google-recaptcha'
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
+import AvisoPrivacidad from './AvisoPrivacidad' // ajusta la ruta si es diferente
 
 export default function HomePage() {
 const [siteKey, setSiteKey] = useState<string>('') // Estado para el sitekey
@@ -462,7 +463,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
           className="w-full border p-2"
           required
         />
-          
+        <p>Autorización de tratamiento de datos personales</p>
         <label className="flex items-center space-x-2 text-sm text-gray-700">
           <input
             type="checkbox"
@@ -472,9 +473,11 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
             className="custom-checkbox"
             required
           />
-          <span>Autorizo el tratamiento de mis datos personales <span className="vardi-color">*</span></span>
+          <span>He leído y acepto las Políticas de Privacidad <span className="vardi-color">*</span></span>
         </label>
-        <p className="text-sm text-gray-600 mb-4">Te invitamos a leer la finalidad sobre tus datos personales, contenidos en la <a href="https://www.nissan.com.co/privacidad.html" target='_blank' className="text-blue-600 hover:underline">política de información de Dinissan</a>.</p>
+        {autorizoDatos && (
+            <AvisoPrivacidad />
+        )}
         {autorizoDatos && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
