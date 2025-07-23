@@ -41,6 +41,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const tiposExcluidos = ['NIT', 'NO IDENTIFICADO','']
   const solicitudesExcluidas = ['SOLICITUD TEST DRIVE', 'SOLICITUD INFORMACIÓN ADMINISTRATIVA','INFORMACIÓN EVENTO', 'PENDIENTE DE CLASIFICAR', 'INFORMACIÓN COTIZACIÓN USADOS' , 'INFORMACIÓN PRECIO DE VEHÍCULOS', 'INFORMACIÓN COTIZACIÓN  VEHÍCULOS NUEVOS', 'SOLICITUD INFORMACIÓN VEHÍCULOS', '', 'INFORMACIÓN COTIZACIÓN SEGURO DE AUTOS']
   const [placas, setPlacas] = useState<string[]>([''])
+  const [modoCanal, setModoCanal] = useState<'todos' | 'ninguno' | 'algunos' | null>(null)
 
   const handlePlacaChange = (index: number, value: string) => {
     const nuevasPlacas = [...placas]
@@ -126,7 +127,11 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
       ...form,
       autorizoDatos,
       placas: placas.filter(p => p.trim() !== '').join(','),
-      canales_autorizados: canalesSeleccionados.map(val => `^${val}^`).join(','),
+      canales_autorizados: modoCanal === 'todos'
+        ? 'todos'
+        : modoCanal === 'ninguno'
+        ? 'ninguno'
+        : canalesSeleccionados.map(val => `^${val}^`).join(','),
 
     }
     // Validar placa
@@ -157,7 +162,14 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
     }
 
     console.log('📦 Payload que se enviará:', payload)
-
+    console.log('📤 Enviando canales autorizados:')
+    if (modoCanal === 'todos') {
+      console.log('✅ Todos')
+    } else if (modoCanal === 'ninguno') {
+      console.log('🚫 Ninguno')
+    } else if (modoCanal === 'algunos') {
+      console.log('🔘 Algunos:', canalesSeleccionados)
+    }
     try {
         const res = await fetch('/api/send-contact', {
           method: 'POST',
@@ -478,42 +490,86 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
         {autorizoDatos && (
             <AvisoPrivacidad />
         )}
+        
         {autorizoDatos && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Canales autorizados
             </label>
-            <div className="grid gap-2">
-              {listas.canales_autorizados &&
-                Object.entries(listas.canales_autorizados)
-                  .filter(([, label]) => !canalesExcluidos.includes(label))
-                  .map(([key, label]) => {
-                    const selected = canalesSeleccionados.includes(key)
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => {
-                          const updated = selected
-                            ? canalesSeleccionados.filter((v) => v !== key)
-                            : [...canalesSeleccionados, key]
 
-                          console.log('📋 Canales actualizados:', updated)
-                          setCanalesSeleccionados(updated)
-                        }}
-                        className={`text-xs px-2 py-1 border transition ${
-                          selected
-                            ? 'bg-vardi-color text-white border-red-600'
-                            : 'bg-white text-gray-700 border-gray-300'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    )
-                  })}
+            <div className="flex justify-center gap-4 mb-4 mt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setModoCanal('todos')
+                  setCanalesSeleccionados([])
+                }}
+                className={`text-sm px-4 py-2 border ${
+                  modoCanal === 'todos' ? 'bg-vardi-color text-white' : 'bg-white text-gray-700'
+                }`}
+              >
+                Todos
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setModoCanal('ninguno')
+                  setCanalesSeleccionados([])
+                }}
+                className={`text-sm px-4 py-2 border ${
+                  modoCanal === 'ninguno' ? 'bg-vardi-color text-white' : 'bg-white text-gray-700'
+                }`}
+              >
+                Ninguno
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setModoCanal('algunos')
+                  setCanalesSeleccionados([])
+                }}
+                className={`text-sm px-4 py-2 border ${
+                  modoCanal === 'algunos' ? 'bg-vardi-color text-white' : 'bg-white text-gray-700'
+                }`}
+              >
+                Algunos
+              </button>
             </div>
+
+            {modoCanal === 'algunos' && (
+              <div className="grid gap-2 grid-cols-2 sm:grid-cols-3">
+                {listas.canales_autorizados &&
+                  Object.entries(listas.canales_autorizados)
+                    .filter(([, label]) => !canalesExcluidos.includes(label))
+                    .map(([key, label]) => {
+                      const selected = canalesSeleccionados.includes(key)
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => {
+                            const updated = selected
+                              ? canalesSeleccionados.filter((v) => v !== key)
+                              : [...canalesSeleccionados, key]
+                            setCanalesSeleccionados(updated)
+                          }}
+                          className={`text-xs px-2 py-2 border transition ${
+                            selected
+                              ? 'bg-vardi-color text-white border-red-600'
+                              : 'bg-white text-gray-700 border-gray-300'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      )
+                    })}
+              </div>
+            )}
           </div>
         )}
+
         {siteKey ? (
           <div className="flex justify-center mt-4">
             <ReCAPTCHA 

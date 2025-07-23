@@ -12,7 +12,28 @@ export async function POST(req: Request) {
 
     // 2. Crear contacto usando el token
     const api = new ApiService(process.env.API_URL!, token)
-    const hayCanales = formData.canales_autorizados && formData.canales_autorizados.replace(/\^/g, '').trim() !== ''
+    console.log("Canales autorizados:   -- ", formData.canales_autorizados)
+      // Determinar valores según lógica de negocio
+      let sasa_auto_contactacion_c = '1'
+      let sasa_canales_autorizados_c = ''
+
+      if (formData.canales_autorizados === 'ninguno') {
+        sasa_auto_contactacion_c = '2'
+        sasa_canales_autorizados_c = '^0^'
+      } else if (formData.canales_autorizados === 'todos') {
+        sasa_auto_contactacion_c = '1'
+        sasa_canales_autorizados_c = ''
+      } else {
+        sasa_auto_contactacion_c = '2'
+        sasa_canales_autorizados_c = formData.canales_autorizados
+      }
+
+      console.log('🚀 Valores enviados:', {
+        canales_autorizados: formData.canales_autorizados,
+        sasa_auto_contactacion_c,
+        sasa_canales_autorizados_c
+      })
+
     const payload = {
         sasa_tipo_de_persona_c: 'N',
         sasa_tipo_documento_c: formData.tipo_documento,
@@ -53,8 +74,8 @@ export async function POST(req: Request) {
         sasa_estado_autorizacion_c: 1,
         sasa_revision_c:'V',
         sasa_fuente_autorizacion_c:'W',
-        sasa_auto_contactacion_c: hayCanales ? '2' : '1',
-        sasa_canales_autorizados_c: hayCanales ? formData.canales_autorizados : '',
+        sasa_auto_contactacion_c,
+        sasa_canales_autorizados_c,
         description:'Ingreso por formulario actualización de datos'
       }
 
