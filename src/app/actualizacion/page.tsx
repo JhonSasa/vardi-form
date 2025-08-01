@@ -197,7 +197,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
         }
 
         //setStatus('✅ Contacto enviado a SugarCRM')
-        toast.success('✅ Hemos recibido tu información correctamente',{
+        toast.success('Hemos recibido tu información correctamente',{
           duration: 8000,
           position: 'top-right',
           style: {
