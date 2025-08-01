@@ -6,6 +6,14 @@ import { getToken } from '@/lib/token'
 export async function POST(req: Request) {
   const formData = await req.json()
 
+    // 🔍 1. Capturar IP del usuario desde el header
+  const ip =
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || // Proxy/Vercel
+    req.headers.get('x-real-ip') || // Otra cabecera común
+    'IP no disponible'
+
+  console.log('🌐 IP del usuario:', ip)
+
   try {
     // 1. Obtener el token usando ApiService (sin token inicial)
     const token = await getToken()
@@ -76,6 +84,7 @@ export async function POST(req: Request) {
         sasa_fuente_autorizacion_c:'W',
         sasa_auto_contactacion_c,
         sasa_canales_autorizados_c,
+        sasa_leadgen_id_c:ip,
         description:'Ingreso por formulario actualización de datos'
       }
 
