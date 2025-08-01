@@ -197,7 +197,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
         }
 
         //setStatus('✅ Contacto enviado a SugarCRM')
-        toast.success('✅ Contacto enviado a SugarCRM',{
+        toast.success('✅ Hemos recibido tu información correctamente',{
           duration: 8000,
           position: 'top-right',
           style: {
@@ -253,7 +253,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
       </div>
       <h1 className="text-2xl font-nissanBold mb-4 text-center">ACTUALIZACIÓN DE DATOS NISSAN</h1>
       <p className="text-sm text-gray-600 mb-4 text-2xl">
-        Te invitamos a que actualices tus datos para que sigamos en contacto, fundamental para tu vehículo y conozcas de nuestras promociones y oferas espaciales para que tu NISSAN te acompañe mucho mas kilometros.
+        Actualizar tu información es fundamental para mantenernos en contacto, acompañarte en el cuidado de tu vehículo y que puedas acceder a todos nuestros productos, servicios y beneficios exclusivos, para que disfrutes de tu <b className='font-nissanBold'>NISSAN</b> por muchos más kilómetros.
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
       {contactoInfo && (
