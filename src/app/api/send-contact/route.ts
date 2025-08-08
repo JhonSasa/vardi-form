@@ -3,16 +3,25 @@ import { ApiService } from '@/lib/apiService'
 //import { getToken } from '@/lib/token'
 import { getToken } from '@/lib/token'
 
+
+// 🔹 Función utilitaria: toma la IP cruda (puede venir con lista o con ::ffff:)
+// y devuelve la IP "limpia" (primera de la lista y sin el prefijo ::ffff:)
+function limpiarIP(ipRaw?: string | null): string {
+  if (!ipRaw) return 'IP no disponible'
+  const first = ipRaw.split(',')[0].trim() // si viene "ip1, ip2, ip3"
+  return first.replace(/^::ffff:/i, '')    // quita el prefijo IPv4-mapeada
+}
+
 export async function POST(req: Request) {
   const formData = await req.json()
 
-    // 🔍 1. Capturar IP del usuario desde el header
-  const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || // Proxy/Vercel
-    req.headers.get('x-real-ip') || // Otra cabecera común
-    'IP no disponible'
+  // 🔍 1. Capturar y normalizar la IP del usuario desde headers
+  const ip = limpiarIP(
+    req.headers.get('x-forwarded-for') || // típico en Vercel/Proxies
+    req.headers.get('x-real-ip')          // común en Nginx
+  )
 
-  console.log('🌐 IP del usuario:', ip)
+  console.log('🌐 IP del usuario (limpia):', ip)
 
   try {
     // 1. Obtener el token usando ApiService (sin token inicial)
