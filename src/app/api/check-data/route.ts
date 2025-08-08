@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   try {
     const token = await getToken()
-    console.log('🔑 Token obtenido:', token)
+
     const api = new ApiService(process.env.API_URL!, token)
 
     // Tipos específicos

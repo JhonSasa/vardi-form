@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     const api = new ApiService(process.env.API_URL!, token)
 
     const data = await api.get<EnumResponse>(`/rest/v11/${moduleName}/enum/${listName}`)
-    console.log('📡 Datos obtenidos de SugarCRM:', data)
+
     return new Response(JSON.stringify(data), {
       headers: { 'Content-Type': 'application/json' },
     })

@@ -33,8 +33,6 @@ async function fetchToken(): Promise<string> {
 
   const api = new ApiService(API_URL)
 
-  console.log('🔐 Solicitando nuevo token a SugarCRM...')
-
   try {
     const result = await api.post<{ access_token: string; expires_in: number }, Record<string, string>>(
       '/rest/v11/oauth2/token',
@@ -57,8 +55,6 @@ async function fetchToken(): Promise<string> {
 
     ;(globalThis as GlobalWithToken)[cacheKey] = tokenData
 
-    console.log('✅ Nuevo token almacenado en cache:', result.access_token)
-
     return result.access_token
   } catch (err) {
     const error = err as Error
@@ -71,7 +67,7 @@ export async function getToken(): Promise<string> {
   const tokenData: TokenCache | undefined = (globalThis as GlobalWithToken)[cacheKey]
 
   if (tokenData && Date.now() < tokenData.expiresAt) {
-    console.log('♻️ Usando token desde cache', tokenData.token)
+
     return tokenData.token
   }
 

@@ -21,15 +21,13 @@ export async function POST(req: Request) {
     req.headers.get('x-real-ip')          // común en Nginx
   )
 
-  console.log('🌐 IP del usuario (limpia):', ip)
-
   try {
     // 1. Obtener el token usando ApiService (sin token inicial)
     const token = await getToken()
 
     // 2. Crear contacto usando el token
     const api = new ApiService(process.env.API_URL!, token)
-    console.log("Canales autorizados:   -- ", formData.canales_autorizados)
+
       // Determinar valores según lógica de negocio
       let sasa_auto_contactacion_c = '1'
       let sasa_canales_autorizados_c = ''
@@ -44,12 +42,6 @@ export async function POST(req: Request) {
         sasa_auto_contactacion_c = '2'
         sasa_canales_autorizados_c = formData.canales_autorizados
       }
-
-      console.log('🚀 Valores enviados:', {
-        canales_autorizados: formData.canales_autorizados,
-        sasa_auto_contactacion_c,
-        sasa_canales_autorizados_c
-      })
 
     const payload = {
         sasa_tipo_de_persona_c: 'N',

@@ -47,7 +47,7 @@ export class ApiService {
   }
 
   async get<T>(endpoint: string): Promise<T> {
-    console.log('📡 GET a:', `${this.baseUrl}${endpoint}`)
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'GET',
       headers: this.getHeaders(),
@@ -68,7 +68,7 @@ export class ApiService {
 
 
   async post<T, B = unknown>(endpoint: string, body: B): Promise<T> {
-    console.log('📡 POST a:', `${this.baseUrl}${endpoint}`)
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       headers: this.getHeaders(),

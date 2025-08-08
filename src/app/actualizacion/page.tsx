@@ -56,7 +56,6 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   }
 
   const checkDocumento = async () => {
-  console.log('👤 Verificando documento:', form.tipo_documento, form.numero_documento)
  
   const res = await fetch('/api/check-data', {
       method: 'POST',
@@ -68,7 +67,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
     })
 
     const data = await res.json()
-    console.log('👤 Resultado:', data)
+
     setContactoInfo(data.contacto || null)
     // Aquí puedes setear visibilidad de campos si data.contacto o data.cuenta existe
   }
@@ -105,7 +104,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
     fetch('/api/env')
       .then(res => res.json())
       .then(data => {
-        //console.log('🔑 DATA DESDE /api/env:', data.sitekey);
+
         setSiteKey(data.sitekey);
       });
   }, []);
@@ -114,7 +113,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
     setForm({ ...form, [e.target.name]: e.target.value })
   }
   const onChangeRecaptcha = (token: string | null) => {
-    //console.log('✅ reCAPTCHA token:', token)
+
     setRecaptchaToken(token)
   }
   const handleSubmit = async (e: React.FormEvent) => {
@@ -161,15 +160,6 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
       return
     }
 
-    console.log('📦 Payload que se enviará:', payload)
-    console.log('📤 Enviando canales autorizados:')
-    if (modoCanal === 'todos') {
-      console.log('✅ Todos')
-    } else if (modoCanal === 'ninguno') {
-      console.log('🚫 Ninguno')
-    } else if (modoCanal === 'algunos') {
-      console.log('🔘 Algunos:', canalesSeleccionados)
-    }
     try {
         const res = await fetch('/api/send-contact', {
           method: 'POST',
@@ -227,7 +217,7 @@ const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
         setRecaptchaToken(null)
         setContactoInfo(null)
         //setForm({ name: '', email: '', message: '' })
-        console.log('📨 Respuesta SugarCRM:', result)
+
       } catch (error) {
           if (error instanceof Error) {
             //setStatus(`❌ Error al enviar: ${error.message}`)
