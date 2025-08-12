@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📦 App – Sasa Consultoría (2025)
 
-## Getting Started
+Aplicación para **actualización de datos – Grupo Vardi**, desarrollada por **Sasa Consultoría**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Ejecución con Docker
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Clonar el repositorio**
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   cd <NOMBRE_DEL_PROYECTO>
+   ```
+2. **Construir la imagen**
+   ```bash
+   docker compose build --no-cache
+   ```
+3. **Levantar el contenedor**
+   ```bash
+   docker compose up -d
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔄 Cambio de puerto
 
-## Learn More
+Si necesitas exponer la aplicación en otro puerto del host:
 
-To learn more about Next.js, take a look at the following resources:
+1. Abrir el archivo `docker-compose.yml`.
+2. Editar la sección `ports`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   **Ejemplo:** cambiar
+   ```yaml
+   ports:
+     - "3000:3000"
+   ```
+   por
+   ```yaml
+   ports:
+     - "3007:3000"
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   En este caso, la aplicación se abrirá en:
+   ```
+   http://localhost:3007
+   ```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ Variables de entorno
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El archivo `.env` contiene la configuración de la aplicación.
+
+
+> **Importante:**
+> - Las variables que empiecen con `NEXT_PUBLIC_` estarán disponibles en el frontend.
+> - Mantén en privado el archivo `.env`, no lo subas al repositorio.
+
+---
+
+## 📄 Licencia
+
+© 2025 Sasa Consultoría. Todos los derechos reservados.
