@@ -37,9 +37,9 @@ export async function POST(req: Request) {
         sasa_canales_autorizados_c = '^0^'
       } else if (formData.canales_autorizados === 'todos') {
         sasa_auto_contactacion_c = '1'
-        sasa_canales_autorizados_c = ''
+        sasa_canales_autorizados_c = '^1^,^6^,^9^,^8^'
       } else {
-        sasa_auto_contactacion_c = '2'
+        sasa_auto_contactacion_c = '1'
         sasa_canales_autorizados_c = formData.canales_autorizados
       }
 
